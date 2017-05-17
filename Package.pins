@@ -2,70 +2,16 @@
   "autoPin": true,
   "pins": [
     {
-      "package": "Axis",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/Axis.git",
-      "version": "0.14.0"
-    },
-    {
-      "package": "CLibvenice",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/CLibvenice.git",
-      "version": "0.14.0"
-    },
-    {
-      "package": "COpenSSL",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/COpenSSL.git",
-      "version": "0.14.0"
-    },
-    {
-      "package": "CPOSIX",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/CPOSIX.git",
-      "version": "0.14.0"
-    },
-    {
-      "package": "CYAJL",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/CYAJL.git",
-      "version": "0.14.0"
-    },
-    {
-      "package": "IP",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/IP.git",
-      "version": "0.14.0"
-    },
-    {
-      "package": "OpenSSL",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/OpenSSL.git",
-      "version": "0.14.0"
-    },
-    {
-      "package": "POSIX",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/POSIX.git",
-      "version": "0.14.1"
-    },
-    {
-      "package": "Reflection",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/Reflection.git",
-      "version": "0.14.3"
-    },
-    {
-      "package": "TCP",
-      "reason": null,
-      "repositoryURL": "https://github.com/Zewo/TCP.git",
-      "version": "0.14.0"
-    },
-    {
       "package": "Venice",
       "reason": null,
       "repositoryURL": "https://github.com/Zewo/Venice.git",
-      "version": "0.14.0"
+      "version": "0.17.1"
+    },
+    {
+      "package": "Zewo",
+      "reason": null,
+      "repositoryURL": "https://github.com/Zewo/Zewo.git",
+      "version": "0.9.4"
     }
   ],
   "version": 1
