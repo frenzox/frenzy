@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "MQTTBroker",
+    name: "Frenzy",
     dependencies: [
         .Package(url: "https://github.com/Zewo/Zewo.git", majorVersion: 0)
     ]
