@@ -1,19 +1,12 @@
 //
 //  Client.swift
-//  Broker
+//  Frenzy
 //
 //  Created by Guilherme Felipe da Silva on 17/05/17.
 //
 //
 
 import Foundation
-
-public enum ConnectionState: UInt8 {
-    case initial = 0
-    case connecting
-    case connected
-    case disconnected
-}
 
 class Client {
     open var host = "localhost"
@@ -23,8 +16,6 @@ class Client {
     open var password: String?
     open var secure = false
     open var cleanSession = true
-    open var backgroundOnSocket = false
-    open var connState = ConnectionState.initial
-    var willMessage: Will?
+    var willMessage: Message?
     open var keepAlive: UInt16 = 60
 }

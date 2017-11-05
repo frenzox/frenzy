@@ -1,6 +1,6 @@
 //
 //  Message.swift
-//  Broker
+//  Frenzy
 //
 //  Created by Guilherme Felipe da Silva on 17/05/17.
 //
@@ -45,14 +45,5 @@ open class Message {
         self.qos = qos
         self.retained = retained
         self.dup = dup
-    }
-}
-
-/**
- *  Will Message
- */
-open class Will: Message {
-    public init(topic: String, message: String) {
-        super.init(topic: topic, payload: message.bytesWithLength)
     }
 }
