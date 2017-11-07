@@ -6,6 +6,8 @@
 //
 //
 
+import Foundation
+
 enum ControlPacketType: UInt8 {
     case reserved    = 0x00
     case connect     = 0x10
@@ -61,25 +63,23 @@ class ControlPacket {
     var variableHeader: [UInt8] = []
     var payload:        [UInt8] = []
     
-    var remainingLength: [UInt8] {
-        get {
-            var bytes: [UInt8] = []
-            var digit: UInt8 = 0
-            var len: UInt32 = UInt32(variableHeader.count + payload.count)
+    func encodeLength() -> [UInt8] {
+        var bytes: [UInt8] = []
+        var digit: UInt8 = 0
+        var len: UInt32 = UInt32(variableHeader.count + payload.count)
+        
+        repeat {
+            digit = UInt8(len % 128)
+            len = len / 128
             
-            repeat {
-                digit = UInt8(len % 128)
-                len = len / 128
-                
-                if len > 0 {
-                    digit = digit | 0x80
-                }
-                
-                bytes.append(digit)
-            } while(len > 0)
+            if len > 0 {
+                digit = digit | 0x80
+            }
             
-            return bytes
-        }
+            bytes.append(digit)
+        } while(len > 0)
+        
+        return bytes
     }
     
     init(type: ControlPacketType, payload: [UInt8] = []) {
@@ -92,6 +92,25 @@ class ControlPacket {
     }
     
     func pack() {}
+    
+    func readLengthPrefixedField(buf: [UInt8]) -> [UInt8]? {
+        if buf.count < 2 {
+            return nil
+        }
+        
+        var total:UInt16 = 0
+        
+        let n = UInt16.init(bigEndian: UInt16(buf[0] << 8 + buf[1]))
+        total += 2
+        
+        if buf.count - Int(total) < n {
+            return nil
+        }
+        
+        total += n
+        
+        return Array(buf[2...Int(total)])
+    }
 }
 
 class ConnectPacket: ControlPacket {
@@ -174,40 +193,51 @@ class ConnectPacket: ControlPacket {
         }
     }
     
-    var client: Client
+    var data: [UInt8]?
+    var client: Client?
+    
+    init(fixedHeader: UInt8, data: [UInt8]) {
+        super.init(fixedHeader: fixedHeader)
+        self.data = data
+    }
     
     init(client: Client) {
         self.client = client
-        super.init(type: ControlPacketType.connect)
+        super.init(type: .connect)
     }
     
     override func pack() {
-        // variable header
-        variableHeader += PROTOCOL_MAGIC.bytesWithLength
-        variableHeader.append(PROTOCOL_LEVEL)
-        
-        // payload
-        payload += client.clientID.bytesWithLength
-        if let will = client.willMessage {
-            flagWill = true
-            flagWillQOS = will.qos.rawValue
-            flagWillRetain = will.retained
-            payload += will.topic.bytesWithLength
-            payload += will.payload
+        if let client = self.client {
+            // variable header
+            variableHeader += PROTOCOL_MAGIC.bytesWithLength
+            variableHeader.append(PROTOCOL_LEVEL)
+            
+            // payload
+            payload += client.clientID.bytesWithLength
+            if let will = client.willMessage {
+                flagWill = true
+                flagWillQOS = will.qos.rawValue
+                flagWillRetain = will.retained
+                payload += will.topic.bytesWithLength
+                payload += will.payload
+            }
+            if let username = client.username {
+                flagUsername = true
+                payload += username.bytesWithLength
+            }
+            if let password = client.password {
+                flagPassword = true
+                payload += password.bytesWithLength
+            }
+            
+            // flags
+            flagCleanSession = client.cleanSession
+            variableHeader.append(flags)
+            variableHeader += client.keepAlive.hlBytes
         }
-        if let username = client.username {
-            flagUsername = true
-            payload += username.bytesWithLength
-        }
-        if let password = client.password {
-            flagPassword = true
-            payload += password.bytesWithLength
-        }
-        
-        // flags
-        flagCleanSession = client.cleanSession
-        variableHeader.append(flags)
-        variableHeader += client.keepAlive.hlBytes
+    }
+    
+    func unpack() {
     }
 }
 
@@ -243,8 +273,7 @@ class PublishPacket: ControlPacket {
             return
         }
         
-        topic = String(cString: UnsafePointer([UInt8](data![2...(pos-1)])))//NSString(bytes: [UInt8](data![2...(pos-1)]), length: Int(len), encoding: String.Encoding.utf8.rawValue) as String?
-        
+        topic = NSString(bytes: [UInt8](data![2...(pos-1)]), length: Int(len), encoding: String.Encoding.utf8.rawValue) as String?
         // msgid
         if qos == 0 {
             msgid = 0
