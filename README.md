@@ -1,1 +1,1 @@
-Swift MQTT broker. Under development.
+Under active development, please come back later.
